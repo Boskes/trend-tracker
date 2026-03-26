@@ -18,7 +18,9 @@ import { searchYouTube } from './youtube.js';
 import { TOPICS, THRESHOLDS, POLL_INTERVAL } from './config.js';
 
 // Load .env manually (no dotenv dep)
-const envPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '.env');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+const envPath = path.join(__dirname, '../.env');
 if (fs.existsSync(envPath)) {
   fs.readFileSync(envPath, 'utf8').split('\n').forEach(line => {
     const [key, ...val] = line.split('=');
@@ -28,15 +30,13 @@ if (fs.existsSync(envPath)) {
   });
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
 const app        = express();
 const PORT       = 3005;
-const DATA_DIR   = path.join(__dirname, 'data');
+const DATA_DIR   = path.join(__dirname, '../data');
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // ── Data helpers ──────────────────────────────────────────────────
 
