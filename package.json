@@ -1,0 +1,16 @@
+{
+  "name": "trend-tracker",
+  "version": "1.0.0",
+  "description": "Track trending Reddit & YouTube content around AI, Claude Code, OpenClaw",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3"
+  }
+}

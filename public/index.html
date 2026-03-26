@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trend Tracker — Mike Control Center</title>
+  <style>
+    :root {
+      --bg:#0d0f18; --surface:#161926; --surface2:#1e2235; --surface3:#252a42;
+      --border:#2a2f4a; --accent:#7c6fff; --accent2:#00d4aa; --danger:#ff5572;
+      --warn:#f59e0b; --text:#e8eaf6; --muted:#7b7f9e; --radius:12px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+    /* Topbar */
+    .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+    .topbar-logo{font-size:24px;} .topbar-title{font-size:1.1rem;font-weight:700;} .topbar-sub{font-size:.8rem;color:var(--muted);}
+    .topbar-spacer{flex:1;}
+    .unseen-badge{background:var(--danger);color:#fff;border-radius:20px;font-size:.72rem;font-weight:700;padding:2px 8px;display:none;}
+    .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .12s;}
+    .btn-primary{background:var(--accent);color:#fff;} .btn-primary:hover{background:#6b5fef;}
+    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);} .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-sm{padding:5px 11px;font-size:.75rem;}
+    .btn-icon{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:4px 8px;border-radius:6px;transition:all .12s;} .btn-icon:hover{background:var(--surface2);color:var(--text);}
+
+    /* Layout */
+    .layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 60px);}
+
+    /* Sidebar */
+    .sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:16px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}
+    .nav-section{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:10px 10px 5px;font-weight:600;}
+    .nav-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.86rem;color:var(--muted);transition:all .12s;border:none;background:none;width:100%;text-align:left;}
+    .nav-btn:hover{background:var(--surface2);color:var(--text);}
+    .nav-btn.active{background:var(--accent);color:#fff;}
+    .nav-btn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .nav-btn .badge{margin-left:auto;background:rgba(255,255,255,.15);border-radius:20px;font-size:.68rem;padding:1px 6px;font-weight:600;}
+    .nav-btn:not(.active) .badge{background:var(--surface2);color:var(--muted);}
+
+    /* Main */
+    .main{flex:1;overflow-y:auto;}
+
+    /* Pages */
+    .page{display:none;padding:24px 28px;}
+    .page.active{display:block;}
+
+    /* Page header */
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+    .page-header h2{font-size:1.3rem;font-weight:700;}
+    .page-header p{font-size:.83rem;color:var(--muted);margin-top:3px;}
+    .header-actions{display:flex;align-items:center;gap:8px;}
+
+    /* Status bar */
+    .status-bar{display:flex;align-items:center;gap:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin-bottom:22px;flex-wrap:wrap;gap:14px;}
+    .status-item{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--muted);}
+    .status-dot{width:7px;height:7px;border-radius:50%;}
+    .dot-green{background:var(--accent2);box-shadow:0 0 5px var(--accent2);}
+    .dot-yellow{background:var(--warn);}
+    .dot-red{background:var(--danger);}
+    .dot-grey{background:var(--muted);}
+
+    /* Metrics */
+    .metrics-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+    .metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;border-top:3px solid var(--accent);}
+    .metric-card.green{border-top-color:var(--accent2);} .metric-card.yellow{border-top-color:var(--warn);} .metric-card.red{border-top-color:var(--danger);}
+    .metric-num{font-size:1.8rem;font-weight:700;color:var(--accent);}
+    .metric-card.green .metric-num{color:var(--accent2);} .metric-card.yellow .metric-num{color:var(--warn);} .metric-card.red .metric-num{color:var(--danger);}
+    .metric-lbl{font-size:.73rem;color:var(--muted);margin-top:3px;}
+
+    /* Topic tabs */
+    .topic-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+    .topic-tab{padding:7px 16px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted);background:var(--surface);transition:all .12s;}
+    .topic-tab:hover{border-color:var(--accent);color:var(--text);}
+    .topic-tab.active{color:#fff;border-color:transparent;}
+
+    /* Two-column feed */
+    .feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+    @media(max-width:900px){.feed-grid{grid-template-columns:1fr;}}
+    .feed-section h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .feed-section h3 span{font-size:1rem;}
+
+    /* Content cards */
+    .content-list{display:flex;flex-direction:column;gap:10px;}
+    .content-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:border-color .15s;cursor:pointer;}
+    .content-card:hover{border-color:var(--accent);}
+    .content-card a{text-decoration:none;color:inherit;}
+    .cc-top{display:flex;gap:10px;align-items:flex-start;}
+    .cc-thumb{width:64px;height:42px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+    .cc-body{flex:1;min-width:0;}
+    .cc-title{font-size:.88rem;font-weight:600;line-height:1.35;margin-bottom:4px;color:var(--text);}
+    .cc-title:hover{color:var(--accent);}
+    .cc-meta{font-size:.73rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
+    .cc-stat{display:flex;align-items:center;gap:3px;}
+    .cc-badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+    .hot-badge{background:rgba(255,85,114,.15);color:var(--danger);border-radius:20px;font-size:.65rem;padding:1px 8px;font-weight:600;}
+    .new-badge{background:rgba(0,212,170,.15);color:var(--accent2);border-radius:20px;font-size:.65rem;padding:1px 8px;font-weight:600;}
+    .sub-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:.65rem;padding:1px 8px;color:var(--muted);}
+
+    /* Alerts page */
+    .alerts-list{display:flex;flex-direction:column;gap:10px;}
+    .alert-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:flex-start;gap:14px;transition:all .15s;}
+    .alert-card.unseen{border-left:3px solid var(--danger);}
+    .alert-icon{font-size:1.4rem;flex-shrink:0;}
+    .alert-body{flex:1;min-width:0;}
+    .alert-title{font-size:.9rem;font-weight:600;margin-bottom:4px;}
+    .alert-title a{color:var(--text);text-decoration:none;} .alert-title a:hover{color:var(--accent);}
+    .alert-meta{font-size:.75rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
+    .alert-metric{color:var(--danger);font-weight:600;}
+    .alert-actions{display:flex;gap:6px;flex-shrink:0;}
+
+    /* Setup page */
+    .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+    @media(max-width:700px){.setup-grid{grid-template-columns:1fr;}}
+    .setup-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+    .setup-card h3{font-size:.95rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .setup-card p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+    .code-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:monospace;font-size:.78rem;color:var(--accent2);overflow-x:auto;white-space:pre;margin-top:8px;}
+    .form-field{margin-bottom:12px;}
+    .form-field label{display:block;font-size:.73rem;color:var(--muted);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+    .form-field input,.form-field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:.85rem;outline:none;font-family:inherit;}
+    .form-field input:focus,.form-field select:focus{border-color:var(--accent);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+    /* Loading */
+    .loading{text-align:center;padding:50px;color:var(--muted);font-size:.9rem;}
+    .spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Empty */
+    .empty{text-align:center;padding:40px 20px;color:var(--muted);}
+    .empty .ei{font-size:2.5rem;margin-bottom:10px;}
+
+    /* Toast */
+    .toast-container{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:999;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 15px;font-size:.83rem;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.4);animation:slideIn .2s ease;}
+    .toast.success{border-left:3px solid var(--accent2);} .toast.error{border-left:3px solid var(--danger);}
+    @keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="topbar-logo">📈</span>
+  <div><div class="topbar-title">Trend Tracker</div><div class="topbar-sub">Reddit & YouTube</div></div>
+  <div class="topbar-spacer"></div>
+  <span class="unseen-badge" id="unseen-badge">0 alerts</span>
+  <button class="btn btn-secondary btn-sm" style="margin-left:8px" onclick="window.location='http://localhost:3000'">← Control Center</button>
+  <button class="btn btn-primary btn-sm" style="margin-left:8px" id="poll-btn" onclick="triggerPoll()">🔄 Poll Now</button>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <span class="nav-section">Overview</span>
+    <button class="nav-btn active" data-page="feed" onclick="nav('feed')"><span>📊</span> Live Feed</button>
+    <button class="nav-btn" data-page="alerts" onclick="nav('alerts')">
+      <span>🚨</span> Alerts
+      <span class="badge" id="nav-alert-badge">0</span>
+    </button>
+
+    <span class="nav-section">Topics</span>
+    <div id="topic-nav"></div>
+
+    <span class="nav-section">Config</span>
+    <button class="nav-btn" data-page="setup" onclick="nav('setup')"><span>⚙️</span> Setup & Keys</button>
+  </nav>
+
+  <main class="main">
+    <!-- Feed -->
+    <div class="page active" id="page-feed">
+      <div class="page-header">
+        <div><h2>📊 Live Feed</h2><p id="last-updated">Not yet polled</p></div>
+        <div class="header-actions">
+          <div class="status-bar" style="margin:0;padding:8px 14px;">
+            <div class="status-item"><div class="status-dot dot-grey" id="reddit-dot"></div><span id="reddit-status">Reddit</span></div>
+            <div class="status-item"><div class="status-dot dot-grey" id="yt-dot"></div><span id="yt-status">YouTube</span></div>
+            <div class="status-item"><div class="status-dot dot-grey" id="poll-dot"></div><span id="poll-status-text">Idle</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-row" id="metrics-row"></div>
+      <div class="topic-tabs" id="topic-tabs"></div>
+      <div id="feed-content"><div class="loading"><div class="spinner"></div><br>Polling Reddit & YouTube…</div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="page" id="page-alerts">
+      <div class="page-header">
+        <div><h2>🚨 Alerts</h2><p>Content that hit your thresholds</p></div>
+        <button class="btn btn-secondary btn-sm" onclick="markAllSeen()">✓ Mark all seen</button>
+      </div>
+      <div id="alerts-content"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- Setup -->
+    <div class="page" id="page-setup">
+      <div class="page-header"><div><h2>⚙️ Setup & API Keys</h2><p>Configure Reddit and YouTube API access</p></div></div>
+
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h3>🟠 Reddit API</h3>
+          <p>Create a free app at <strong>reddit.com/prefs/apps</strong> → "create another app" → choose <strong>script</strong>.</p>
+          <div class="form-field"><label>Client ID</label><input type="text" id="s-reddit-id" placeholder="your_client_id" /></div>
+          <div class="form-field"><label>Client Secret</label><input type="password" id="s-reddit-secret" placeholder="your_client_secret" /></div>
+          <div class="form-field"><label>User Agent</label><input type="text" id="s-reddit-ua" placeholder="TrendTracker/1.0 by YourUsername" /></div>
+        </div>
+        <div class="setup-card">
+          <h3>🔴 YouTube API</h3>
+          <p>Go to <strong>console.cloud.google.com</strong> → APIs & Services → Enable <strong>YouTube Data API v3</strong> → Create API Key.</p>
+          <div class="form-field"><label>YouTube API Key</label><input type="password" id="s-yt-key" placeholder="AIzaSy..." /></div>
+          <p style="margin-top:4px">Free quota: 10,000 units/day (~100 searches/day).</p>
+        </div>
+        <div class="setup-card">
+          <h3>🚨 Alert Thresholds</h3>
+          <p>Alert me when a post/video reaches:</p>
+          <div class="form-row">
+            <div class="form-field"><label>Reddit upvotes</label><input type="number" id="s-r-upvotes" /></div>
+            <div class="form-field"><label>Reddit comments</label><input type="number" id="s-r-comments" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>YouTube views</label><input type="number" id="s-yt-views" /></div>
+            <div class="form-field"><label>YouTube likes</label><input type="number" id="s-yt-likes" /></div>
+          </div>
+        </div>
+        <div class="setup-card">
+          <h3>⏰ Polling</h3>
+          <p>How often to check Reddit & YouTube automatically.</p>
+          <div class="form-field">
+            <label>Interval (minutes)</label>
+            <select id="s-interval">
+              <option value="15">Every 15 minutes</option>
+              <option value="30">Every 30 minutes</option>
+              <option value="60">Every hour</option>
+              <option value="120">Every 2 hours</option>
+            </select>
+          </div>
+          <p>Current: polls automatically. Use "Poll Now" to trigger manually.</p>
+        </div>
+      </div>
+
+      <div class="setup-card" style="margin-bottom:18px">
+        <h3>📄 Create .env file</h3>
+        <p>Save your keys in a <code>.env</code> file in the trend-tracker folder. They are never sent anywhere — only used server-side.</p>
+        <div class="code-block" id="env-preview">REDDIT_CLIENT_ID=...
+REDDIT_CLIENT_SECRET=...
+REDDIT_USER_AGENT=TrendTracker/1.0 by YourUsername
+YOUTUBE_API_KEY=...
+POLL_INTERVAL_MINUTES=30</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API = window.location.origin;
+let state = { status: {}, results: {}, alerts: [], topics: [], activeTopic: null };
+
+// ── Boot ──────────────────────────────────────────────────────────
+async function init() {
+  await loadTopics();
+  await Promise.all([loadStatus(), loadResults(), loadAlerts(), loadSettings()]);
+  setInterval(async () => { await loadStatus(); await loadResults(); await loadAlerts(); }, 30000);
+}
+
+// ── Nav ───────────────────────────────────────────────────────────
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  if (page === 'alerts') renderAlerts();
+}
+
+// ── Data ──────────────────────────────────────────────────────────
+async function loadTopics() {
+  state.topics = await fetch(`${API}/api/topics`).then(r => r.json());
+  state.activeTopic = state.topics[0]?.id || null;
+  renderTopicNav();
+  renderTopicTabs();
+}
+
+async function loadStatus() {
+  state.status = await fetch(`${API}/api/status`).then(r => r.json());
+  renderStatus();
+}
+
+async function loadResults() {
+  state.results = await fetch(`${API}/api/results`).then(r => r.json());
+  renderFeed();
+  renderMetrics();
+}
+
+async function loadAlerts() {
+  state.alerts = await fetch(`${API}/api/alerts`).then(r => r.json());
+  const unseen = state.alerts.filter(a => !a.seen).length;
+  document.getElementById('nav-alert-badge').textContent = unseen;
+  const badge = document.getElementById('unseen-badge');
+  if (unseen > 0) { badge.style.display = 'inline'; badge.textContent = `${unseen} alert${unseen>1?'s':''}`; }
+  else badge.style.display = 'none';
+}
+
+async function loadSettings() {
+  const s = await fetch(`${API}/api/settings`).then(r => r.json());
+  document.getElementById('s-r-upvotes').value  = s.reddit?.upvotes  || 50;
+  document.getElementById('s-r-comments').value = s.reddit?.comments || 20;
+  document.getElementById('s-yt-views').value   = s.youtube?.views   || 1000;
+  document.getElementById('s-yt-likes').value   = s.youtube?.likes   || 50;
+  document.getElementById('s-interval').value   = s.pollIntervalMinutes || 30;
+}
+
+// ── Status bar ────────────────────────────────────────────────────
+function renderStatus() {
+  const s = state.status;
+  const rDot = document.getElementById('reddit-dot');
+  const yDot = document.getElementById('yt-dot');
+  const pDot = document.getElementById('poll-dot');
+
+  rDot.className = 'status-dot ' + (s.hasRedditAuth  ? 'dot-green' : 'dot-yellow');
+  yDot.className = 'status-dot ' + (s.hasYouTubeAuth ? 'dot-green' : 'dot-yellow');
+  document.getElementById('reddit-status').textContent = s.hasRedditAuth  ? 'Reddit ✓'  : 'Reddit (no auth)';
+  document.getElementById('yt-status').textContent     = s.hasYouTubeAuth ? 'YouTube ✓' : 'YouTube (no key)';
+
+  pDot.className = 'status-dot ' + (s.pollStatus === 'polling' ? 'dot-yellow' : s.pollStatus === 'ok' ? 'dot-green' : 'dot-grey');
+  document.getElementById('poll-status-text').textContent = s.isPolling ? 'Polling…' : s.pollStatus === 'ok' ? 'Up to date' : 'Idle';
+
+  if (s.lastPoll) {
+    const d = new Date(s.lastPoll);
+    document.getElementById('last-updated').textContent = `Last updated: ${d.toLocaleTimeString('nl-NL')}`;
+  }
+}
+
+// ── Metrics ───────────────────────────────────────────────────────
+function renderMetrics() {
+  const topics = state.topics;
+  let totalReddit = 0, totalYT = 0;
+  for (const t of topics) {
+    const r = state.results.topics?.[t.id] || {};
+    totalReddit += (r.reddit  || []).length;
+    totalYT     += (r.youtube || []).length;
+  }
+  const unseen = state.alerts.filter(a => !a.seen).length;
+  document.getElementById('metrics-row').innerHTML = [
+    { n: topics.length,  l: 'Topics tracked',   c: '' },
+    { n: totalReddit,    l: 'Reddit posts',      c: '' },
+    { n: totalYT,        l: 'YouTube videos',    c: 'green' },
+    { n: unseen,         l: 'Unseen alerts',     c: unseen > 0 ? 'red' : '' },
+  ].map(m => `
+    <div class="metric-card ${m.c}">
+      <div class="metric-num">${m.n}</div>
+      <div class="metric-lbl">${m.l}</div>
+    </div>`).join('');
+}
+
+// ── Topic nav + tabs ──────────────────────────────────────────────
+function renderTopicNav() {
+  document.getElementById('topic-nav').innerHTML = state.topics.map(t => `
+    <button class="nav-btn" data-page="feed" onclick="setTopic('${t.id}');nav('feed')">
+      <span class="dot" style="background:${t.color}"></span> ${t.label}
+    </button>`).join('');
+}
+
+function renderTopicTabs() {
+  document.getElementById('topic-tabs').innerHTML = state.topics.map(t => `
+    <button class="topic-tab ${state.activeTopic===t.id?'active':''}"
+      style="${state.activeTopic===t.id?`background:${t.color}`:'color:var(--muted)'}"
+      onclick="setTopic('${t.id}')">${t.label}</button>`).join('');
+}
+
+function setTopic(id) {
+  state.activeTopic = id;
+  renderTopicTabs();
+  renderFeed();
+}
+
+// ── Feed ──────────────────────────────────────────────────────────
+function renderFeed() {
+  const topic = state.topics.find(t => t.id === state.activeTopic);
+  if (!topic) return;
+  const data    = state.results.topics?.[topic.id] || { reddit: [], youtube: [] };
+  const reddit  = data.reddit  || [];
+  const youtube = data.youtube || [];
+
+  document.getElementById('feed-content').innerHTML = `
+    <div class="feed-grid">
+      <div class="feed-section">
+        <h3><span>🟠</span> Reddit · r/${topic.subreddits?.join(', r/') || 'various'}</h3>
+        <div class="content-list">
+          ${reddit.length ? reddit.map(p => redditCard(p)).join('') : '<div class="empty"><div class="ei">🟠</div><p>No posts yet — hit Poll Now</p></div>'}
+        </div>
+      </div>
+      <div class="feed-section">
+        <h3><span>🔴</span> YouTube</h3>
+        <div class="content-list">
+          ${youtube.length ? youtube.map(v => youtubeCard(v)).join('') : '<div class="empty"><div class="ei">🔴</div><p>No videos yet — add YouTube API key</p></div>'}
+        </div>
+      </div>
+    </div>`;
+}
+
+function redditCard(p) {
+  const isHot  = p.upvotes  >= 100;
+  const isNew  = (Date.now() - new Date(p.created).getTime()) < 24*60*60*1000;
+  return `
+    <div class="content-card">
+      <div class="cc-top">
+        <div class="cc-body">
+          <div class="cc-title"><a href="${p.url}" target="_blank">${p.title}</a></div>
+          <div class="cc-meta">
+            <span class="cc-stat">⬆️ ${p.upvotes.toLocaleString()}</span>
+            <span class="cc-stat">💬 ${p.comments}</span>
+            <span class="cc-stat">👤 ${p.author}</span>
+          </div>
+          <div class="cc-badges">
+            <span class="sub-badge">r/${p.subreddit}</span>
+            ${isHot  ? '<span class="hot-badge">🔥 HOT</span>'  : ''}
+            ${isNew  ? '<span class="new-badge">✨ NEW</span>'   : ''}
+            ${p.flair ? `<span class="sub-badge">${p.flair}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function youtubeCard(v) {
+  const isHot = v.views >= 5000;
+  return `
+    <div class="content-card">
+      <div class="cc-top">
+        ${v.thumbnail ? `<img class="cc-thumb" src="${v.thumbnail}" alt="" loading="lazy" />` : ''}
+        <div class="cc-body">
+          <div class="cc-title"><a href="${v.url}" target="_blank">${v.title}</a></div>
+          <div class="cc-meta">
+            <span class="cc-stat">👁 ${v.views.toLocaleString()}</span>
+            <span class="cc-stat">👍 ${v.likes.toLocaleString()}</span>
+            <span class="cc-stat">📺 ${v.channel}</span>
+          </div>
+          <div class="cc-badges">
+            ${isHot ? '<span class="hot-badge">🔥 TRENDING</span>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Alerts ────────────────────────────────────────────────────────
+function renderAlerts() {
+  const el = document.getElementById('alerts-content');
+  if (!state.alerts.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">🚨</div><p>No alerts yet. Content will appear here when it hits your thresholds.</p></div>';
+    return;
+  }
+  el.innerHTML = `<div class="alerts-list">${state.alerts.map(a => `
+    <div class="alert-card ${a.seen ? '' : 'unseen'}" id="alert-${a.id}">
+      <span class="alert-icon">${a.type === 'youtube' ? '🔴' : '🟠'}</span>
+      <div class="alert-body">
+        <div class="alert-title"><a href="${a.url}" target="_blank">${a.title}</a></div>
+        <div class="alert-meta">
+          <span>📁 ${a.topicLabel}</span>
+          <span class="alert-metric">📊 ${a.metric}</span>
+          <span>🕐 ${new Date(a.timestamp).toLocaleString('nl-NL')}</span>
+        </div>
+      </div>
+      <div class="alert-actions">
+        <a href="${a.url}" target="_blank" class="btn btn-secondary btn-sm">Open ↗</a>
+        <button class="btn-icon" onclick="deleteAlert('${a.id}')" title="Dismiss">✕</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+async function markAllSeen() {
+  await fetch(`${API}/api/alerts/seen`, { method: 'POST' });
+  await loadAlerts();
+  renderAlerts();
+  toast('All alerts marked as seen');
+}
+
+async function deleteAlert(id) {
+  await fetch(`${API}/api/alerts/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  await loadAlerts();
+  renderAlerts();
+}
+
+// ── Settings ──────────────────────────────────────────────────────
+async function saveSettings() {
+  const body = {
+    reddit:  { enabled: true, upvotes: +document.getElementById('s-r-upvotes').value, comments: +document.getElementById('s-r-comments').value },
+    youtube: { enabled: true, views:   +document.getElementById('s-yt-views').value,  likes:    +document.getElementById('s-yt-likes').value },
+    pollIntervalMinutes: +document.getElementById('s-interval').value,
+  };
+  await fetch(`${API}/api/settings`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  updateEnvPreview();
+  toast('Settings saved! Restart the server to apply new poll interval.');
+}
+
+function updateEnvPreview() {
+  const id     = document.getElementById('s-reddit-id').value     || 'your_client_id';
+  const secret = document.getElementById('s-reddit-secret').value || 'your_client_secret';
+  const ua     = document.getElementById('s-reddit-ua').value     || 'TrendTracker/1.0 by YourUsername';
+  const yt     = document.getElementById('s-yt-key').value        || 'your_youtube_api_key';
+  const iv     = document.getElementById('s-interval').value      || '30';
+  document.getElementById('env-preview').textContent =
+`REDDIT_CLIENT_ID=${id}
+REDDIT_CLIENT_SECRET=${secret}
+REDDIT_USER_AGENT=${ua}
+YOUTUBE_API_KEY=${yt}
+POLL_INTERVAL_MINUTES=${iv}`;
+}
+['s-reddit-id','s-reddit-secret','s-reddit-ua','s-yt-key','s-interval'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateEnvPreview);
+});
+
+// ── Poll ──────────────────────────────────────────────────────────
+async function triggerPoll() {
+  const btn = document.getElementById('poll-btn');
+  btn.disabled = true; btn.textContent = '⏳ Polling…';
+  await fetch(`${API}/api/poll`, { method: 'POST' });
+  setTimeout(async () => {
+    await Promise.all([loadStatus(), loadResults(), loadAlerts()]);
+    btn.disabled = false; btn.textContent = '🔄 Poll Now';
+    toast('Poll complete!');
+  }, 8000);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${type==='success'?'✅':'❌'}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+{
+  "updatedAt": "2026-03-26T06:30:02.989Z",
+  "topics": {
+    "claude-code": {
+      "reddit": [
+        {
+          "id": "1s38apa",
+          "source": "reddit",
+          "subreddit": "opencodeCLI",
+          "title": "OpenCode vs ClaudeCode ?",
+          "url": "https://reddit.com/r/opencodeCLI/comments/1s38apa/opencode_vs_claudecode/",
+          "upvotes": 33,
+          "comments": 44,
+          "score": 33,
+          "author": "Puzzleheaded_Leek258",
+          "created": "2026-03-25T11:40:32.000Z"
+        },
+        {
+          "id": "1s3ifey",
+          "source": "reddit",
+          "subreddit": "ClaudeAI",
+          "title": "Use claude.ai before claude code to save tokens",
+          "url": "https://reddit.com/r/ClaudeAI/comments/1s3ifey/use_claudeai_before_claude_code_to_save_tokens/",
+          "upvotes": 4,
+          "comments": 21,
+          "score": 4,
+          "author": "frogchungus",
+          "created": "2026-03-25T18:08:37.000Z"
+        },
+        {
+          "id": "1s314mn",
+          "source": "reddit",
+          "subreddit": "ClaudeAI",
+          "title": "Claude Code Visual: hooks, subagents, MCP, CLAUDE.md",
+          "url": "https://reddit.com/r/ClaudeAI/comments/1s314mn/claude_code_visual_hooks_subagents_mcp_claudemd/",
+          "upvotes": 7,
+          "comments": 7,
+          "score": 7,
+          "author": "SilverConsistent9222",
+          "created": "2026-03-25T04:39:11.000Z"
+        },
+        {
+          "id": "1s3fr2l",
+          "source": "reddit",
+          "subreddit": "ClaudeCode",
+          "title": "I cancelled Claude code",
+          "url": "https://reddit.com/r/ClaudeCode/comments/1s3fr2l/i_cancelled_claude_code/",
+          "upvotes": 24,
+          "comments": 29,
+          "score": 24,
+          "author": "Individual_Land_5503",
+          "created": "2026-03-25T16:33:40.000Z"
+        },
+        {
+          "id": "1s316a1",
+          "source": "reddit",
+          "subreddit": "Anthropic",
+          "title": "Claude Code Visual: hooks, subagents, MCP, CLAUDE.md",
+          "url": "https://reddit.com/r/Anthropic/comments/1s316a1/claude_code_visual_hooks_subagents_mcp_claudemd/",
+          "upvotes": 3,
+          "comments": 1,
+          "score": 3,
+          "author": "SilverConsistent9222",
+          "created": "2026-03-25T04:41:40.000Z"
+        },
+        {
+          "id": "1s3i5le",
+          "source": "reddit",
+          "subreddit": "vibecoders_",
+          "title": "Useful Claude Code Cheat sheet!",
+          "url": "https://reddit.com/r/vibecoders_/comments/1s3i5le/useful_claude_code_cheat_sheet/",
+          "upvotes": 73,
+          "comments": 0,
+          "score": 73,
+          "author": "OutrageousName6924",
+          "created": "2026-03-25T17:59:06.000Z"
+        },
+        {
+          "id": "1s28mnc",
+          "source": "reddit",
+          "subreddit": "ClaudeAI",
+          "title": "What’s the difference between Claude and Claude Code",
+          "url": "https://reddit.com/r/ClaudeAI/comments/1s28mnc/whats_the_difference_between_claude_and_claude/",
+          "upvotes": 199,
+          "comments": 57,
+          "score": 199,
+          "author": "GumanHoon",
+          "created": "2026-03-24T09:06:30.000Z"
+        },
+        {
+          "id": "1s2ci4f",
+          "source": "reddit",
+          "subreddit": "ClaudeCode",
+          "title": "Claude Code can now /dream",
+          "url": "https://reddit.com/r/ClaudeCode/comments/1s2ci4f/claude_code_can_now_dream/",
+          "upvotes": 2122,
+          "comments": 320,
+          "score": 2122,
+          "author": "alphastar777",
+          "created": "2026-03-24T12:34:44.000Z"
+        },
+        {
+          "id": "1s1nj01",
+          "source": "reddit",
+          "subreddit": "claude",
+          "title": "Claude Code error on VS Code: Error: Claude Code on Windows requires git-bash",
+          "url": "https://reddit.com/r/claude/comments/1s1nj01/claude_code_error_on_vs_code_error_claude_code_on/",
+          "upvotes": 3,
+          "comments": 5,
+          "score": 3,
+          "author": "SpicySummerChild",
+          "created": "2026-03-23T17:31:17.000Z"
+        },
+        {
+          "id": "1s3mi6l",
+          "source": "reddit",
+          "subreddit": "opencodeCLI",
+          "title": "OpenCode vs ClaudeCode as agentic harness test - refactoring",
+          "url": "https://reddit.com/r/opencodeCLI/comments/1s3mi6l/opencode_vs_claudecode_as_agentic_harness_test/",
+          "upvotes": 22,
+          "comments": 5,
+          "score": 22,
+          "author": "Odd_Crab1224",
+          "created": "2026-03-25T20:35:16.000Z"
+        }
+      ],
+      "youtube": []
+    },
+    "openclaw": {
+      "reddit": [
+        {
+          "id": "1s3bb3p",
+          "source": "reddit",
+          "subreddit": "Tailscale",
+          "title": "Blog: OpenClaw is fun. OpenClaw is dangerous. Here's where Tailscale helps.",
+          "url": "https://reddit.com/r/Tailscale/comments/1s3bb3p/blog_openclaw_is_fun_openclaw_is_dangerous_heres/",
+          "upvotes": 32,
+          "comments": 5,
+          "score": 32,
+          "author": "Ironicbadger",
+          "created": "2026-03-25T13:50:36.000Z"
+        },
+        {
+          "id": "1s3voil",
+          "source": "reddit",
+          "subreddit": "openclaw",
+          "title": "Openclaw Procrastination",
+          "url": "https://reddit.com/r/openclaw/comments/1s3voil/openclaw_procrastination/",
+          "upvotes": 8,
+          "comments": 33,
+          "score": 8,
+          "author": "Tasty-Selection7144",
+          "created": "2026-03-26T02:49:15.000Z"
+        },
+        {
+          "id": "1s3w1ug",
+          "source": "reddit",
+          "subreddit": "clawdbot",
+          "title": "Why openclaw?",
+          "url": "https://reddit.com/r/clawdbot/comments/1s3w1ug/why_openclaw/",
+          "upvotes": 4,
+          "comments": 16,
+          "score": 4,
+          "author": "bri-_-guy",
+          "created": "2026-03-26T03:06:07.000Z"
+        },
+        {
+          "id": "1s3n67n",
+          "source": "reddit",
+          "subreddit": "mcp",
+          "title": "OpenClaw Direct – Deploy, monitor, and manage your OpenClaw AI assistants via natural language.",
+          "url": "https://reddit.com/r/mcp/comments/1s3n67n/openclaw_direct_deploy_monitor_and_manage_your/",
+          "upvotes": 2,
+          "comments": 1,
+          "score": 2,
+          "author": "modelcontextprotocol",
+          "created": "2026-03-25T21:00:01.000Z"
+        },
+        {
+          "id": "1s3ksaw",
+          "source": "reddit",
+          "subreddit": "buhaydigital",
+          "title": "Maraming clients ang nababaliw sa OpenClaw",
+          "url": "https://reddit.com/r/buhaydigital/comments/1s3ksaw/maraming_clients_ang_nababaliw_sa_openclaw/",
+          "upvotes": 155,
+          "comments": 29,
+          "score": 155,
+          "author": "tag_ape",
+          "created": "2026-03-25T19:33:15.000Z"
+        },
+        {
+          "id": "1s3yg6k",
+          "source": "reddit",
+          "subreddit": "openclaw",
+          "title": "Focus on Openclaw or Claude?",
+          "url": "https://reddit.com/r/openclaw/comments/1s3yg6k/focus_on_openclaw_or_claude/",
+          "upvotes": 3,
+          "comments": 15,
+          "score": 3,
+          "author": "Hot_Net_800",
+          "created": "2026-03-26T05:08:04.000Z"
+        },
+        {
+          "id": "1s3incd",
+          "source": "reddit",
+          "subreddit": "OpenClawCentral",
+          "title": "Meet OpenClaw UI",
+          "url": "https://reddit.com/r/OpenClawCentral/comments/1s3incd/meet_openclaw_ui/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "FunAnteater1717",
+          "created": "2026-03-25T18:16:30.000Z"
+        },
+        {
+          "id": "1s2nyuz",
+          "source": "reddit",
+          "subreddit": "ShowinPublic",
+          "title": "OpenClaw VPS is live: managed OpenClaw without infra babysitting (7-day trial)",
+          "url": "https://reddit.com/r/ShowinPublic/comments/1s2nyuz/openclaw_vps_is_live_managed_openclaw_without/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "appjitsu",
+          "created": "2026-03-24T19:35:28.000Z"
+        },
+        {
+          "id": "1s3io5h",
+          "source": "reddit",
+          "subreddit": "OpenClawInstall",
+          "title": "Meet OpenClaw UI",
+          "url": "https://reddit.com/r/OpenClawInstall/comments/1s3io5h/meet_openclaw_ui/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "FunAnteater1717",
+          "created": "2026-03-25T18:17:18.000Z"
+        },
+        {
+          "id": "1s2qfz1",
+          "source": "reddit",
+          "subreddit": "openclaw",
+          "title": "Openclaw or Claude",
+          "url": "https://reddit.com/r/openclaw/comments/1s2qfz1/openclaw_or_claude/",
+          "upvotes": 16,
+          "comments": 44,
+          "score": 16,
+          "author": "Majestic_Answer9566",
+          "created": "2026-03-24T21:05:49.000Z"
+        }
+      ],
+      "youtube": []
+    },
+    "ai-tools": {
+      "reddit": [
+        {
+          "id": "1s314n3",
+          "source": "reddit",
+          "subreddit": "cursor",
+          "title": "AI beginner who know has access to cursor",
+          "url": "https://reddit.com/r/cursor/comments/1s314n3/ai_beginner_who_know_has_access_to_cursor/",
+          "upvotes": 5,
+          "comments": 8,
+          "score": 5,
+          "author": "Otherwise_Ice_5030",
+          "created": "2026-03-25T04:39:12.000Z"
+        },
+        {
+          "id": "1s37jrh",
+          "source": "reddit",
+          "subreddit": "framer",
+          "title": "Framer to AI - Bring Framer designs into AI coding tools like Cursor, Claude, Lovable etc.",
+          "url": "https://reddit.com/r/framer/comments/1s37jrh/framer_to_ai_bring_framer_designs_into_ai_coding/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "Lucky-Mall85",
+          "created": "2026-03-25T11:01:54.000Z"
+        },
+        {
+          "id": "1s134da",
+          "source": "reddit",
+          "subreddit": "eDeals",
+          "title": "Cursor AI pro+ annual subscription",
+          "url": "https://reddit.com/r/eDeals/comments/1s134da/cursor_ai_pro_annual_subscription/",
+          "upvotes": 2,
+          "comments": 14,
+          "score": 2,
+          "author": "Middle-Room-986",
+          "created": "2026-03-23T01:11:09.000Z"
+        },
+        {
+          "id": "1s1y0r4",
+          "source": "reddit",
+          "subreddit": "AISetups",
+          "title": "Sharing my ai coding setup: claude cursor and open source cli",
+          "url": "https://reddit.com/r/AISetups/comments/1s1y0r4/sharing_my_ai_coding_setup_claude_cursor_and_open/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "Substantial-Cost-429",
+          "created": "2026-03-23T23:56:11.000Z"
+        },
+        {
+          "id": "1s3gub3",
+          "source": "reddit",
+          "subreddit": "coolgithubprojects",
+          "title": "agenttop - htop for AI coding agents. Track Claude Code, Cursor, Copilot usage, costs, and token waste in one dashboard.",
+          "url": "https://reddit.com/r/coolgithubprojects/comments/1s3gub3/agenttop_htop_for_ai_coding_agents_track_claude/",
+          "upvotes": 3,
+          "comments": 7,
+          "score": 3,
+          "author": "Potential_Sense_400",
+          "created": "2026-03-25T17:12:50.000Z"
+        },
+        {
+          "id": "1s1ioap",
+          "source": "reddit",
+          "subreddit": "ArtificialInteligence",
+          "title": "Cursor admits its new coding model was built on top of Moonshot AI’s Kimi",
+          "url": "https://reddit.com/r/ArtificialInteligence/comments/1s1ioap/cursor_admits_its_new_coding_model_was_built_on/",
+          "upvotes": 11,
+          "comments": 7,
+          "score": 11,
+          "author": "Secure-Address4385",
+          "created": "2026-03-23T14:38:35.000Z"
+        },
+        {
+          "id": "1s21q03",
+          "source": "reddit",
+          "subreddit": "AIGuild",
+          "title": "Cursor’s Composer 2 Drama Is Really About Credit, China, and the Future of Open-Source AI",
+          "url": "https://reddit.com/r/AIGuild/comments/1s21q03/cursors_composer_2_drama_is_really_about_credit/",
+          "upvotes": 3,
+          "comments": 0,
+          "score": 3,
+          "author": "Such-Run-4412",
+          "created": "2026-03-24T02:35:32.000Z"
+        },
+        {
+          "id": "1s1e1ck",
+          "source": "reddit",
+          "subreddit": "developersIndia",
+          "title": "Built a macOS AI assistant app in 6 days using Cursor, here's what I learned",
+          "url": "https://reddit.com/r/developersIndia/comments/1s1e1ck/built_a_macos_ai_assistant_app_in_6_days_using/",
+          "upvotes": 3,
+          "comments": 2,
+          "score": 3,
+          "author": "nmole_",
+          "created": "2026-03-23T11:17:54.000Z"
+        },
+        {
+          "id": "1rym0nv",
+          "source": "reddit",
+          "subreddit": "AIGuild",
+          "title": "Cursor Levels Up: New AI Coding Model Targets OpenAI and Anthropic",
+          "url": "https://reddit.com/r/AIGuild/comments/1rym0nv/cursor_levels_up_new_ai_coding_model_targets/",
+          "upvotes": 2,
+          "comments": 0,
+          "score": 2,
+          "author": "Such-Run-4412",
+          "created": "2026-03-20T03:54:45.000Z"
+        },
+        {
+          "id": "1s0a905",
+          "source": "reddit",
+          "subreddit": "vibecoders_",
+          "title": "Built a local session-memory layer for Cursor, Claude and other AI coding tools",
+          "url": "https://reddit.com/r/vibecoders_/comments/1s0a905/built_a_local_sessionmemory_layer_for_cursor/",
+          "upvotes": 3,
+          "comments": 1,
+          "score": 3,
+          "author": "Mrdabsextracts",
+          "created": "2026-03-22T02:41:25.000Z"
+        }
+      ],
+      "youtube": []
+    },
+    "anthropic": {
+      "reddit": [
+        {
+          "id": "1s2zugp",
+          "source": "reddit",
+          "subreddit": "Anthropic",
+          "title": "Dear Anthropic",
+          "url": "https://reddit.com/r/Anthropic/comments/1s2zugp/dear_anthropic/",
+          "upvotes": 312,
+          "comments": 50,
+          "score": 312,
+          "author": "crfr4mvzl",
+          "created": "2026-03-25T03:34:38.000Z"
+        },
+        {
+          "id": "1s3f8rh",
+          "source": "reddit",
+          "subreddit": "redditstock",
+          "title": "RDDT vs Anthropic update",
+          "url": "https://reddit.com/r/redditstock/comments/1s3f8rh/rddt_vs_anthropic_update/",
+          "upvotes": 32,
+          "comments": 14,
+          "score": 32,
+          "author": "early-retirement-plz",
+          "created": "2026-03-25T16:15:12.000Z"
+        },
+        {
+          "id": "1s35596",
+          "source": "reddit",
+          "subreddit": "ClaudeCode",
+          "title": "Anthropic is straight up lying now",
+          "url": "https://reddit.com/r/ClaudeCode/comments/1s35596/anthropic_is_straight_up_lying_now/",
+          "upvotes": 399,
+          "comments": 664,
+          "score": 399,
+          "author": "Old-Ad-8307",
+          "created": "2026-03-25T08:38:09.000Z"
+        },
+        {
+          "id": "1s2sok2",
+          "source": "reddit",
+          "subreddit": "newsokunomoral",
+          "title": "Anthropic、ClaudeがユーザーのPCでアプリを操作する機能を追加",
+          "url": "https://reddit.com/r/newsokunomoral/comments/1s2sok2/anthropicclaudeがユーザーのpcでアプリを操作する機能を追加/",
+          "upvotes": 10,
+          "comments": 2,
+          "score": 10,
+          "author": "Covozi",
+          "created": "2026-03-24T22:30:10.000Z"
+        },
+        {
+          "id": "1s3vsm5",
+          "source": "reddit",
+          "subreddit": "claude",
+          "title": "Anthropic broke your limits with the 1M context update",
+          "url": "https://reddit.com/r/claude/comments/1s3vsm5/anthropic_broke_your_limits_with_the_1m_context/",
+          "upvotes": 42,
+          "comments": 40,
+          "score": 42,
+          "author": "BraxbroWasTaken",
+          "created": "2026-03-26T02:54:30.000Z"
+        },
+        {
+          "id": "1s2p6n2",
+          "source": "reddit",
+          "subreddit": "Anthropic",
+          "title": "Anthropic and Claude Usage Limits",
+          "url": "https://reddit.com/r/Anthropic/comments/1s2p6n2/anthropic_and_claude_usage_limits/",
+          "upvotes": 88,
+          "comments": 23,
+          "score": 88,
+          "author": "WorldsWorstSysadmin",
+          "created": "2026-03-24T20:19:39.000Z"
+        },
+        {
+          "id": "1s3c0tp",
+          "source": "reddit",
+          "subreddit": "ClaudeCode",
+          "title": "Has Anthropic publicly acknowledged the instability?",
+          "url": "https://reddit.com/r/ClaudeCode/comments/1s3c0tp/has_anthropic_publicly_acknowledged_the/",
+          "upvotes": 6,
+          "comments": 0,
+          "score": 6,
+          "author": "cosmiceric",
+          "created": "2026-03-25T14:17:04.000Z"
+        },
+        {
+          "id": "1s3gg0d",
+          "source": "reddit",
+          "subreddit": "wallstreetbets",
+          "title": "$ZM - Best Anthropic Play, Trades Below Nav.",
+          "url": "https://reddit.com/r/wallstreetbets/comments/1s3gg0d/zm_best_anthropic_play_trades_below_nav/",
+          "upvotes": 94,
+          "comments": 47,
+          "score": 94,
+          "author": "Stonkgang_",
+          "created": "2026-03-25T16:59:05.000Z"
+        },
+        {
+          "id": "1s38ufu",
+          "source": "reddit",
+          "subreddit": "openclaw",
+          "title": "Is Anthropic the way to go?",
+          "url": "https://reddit.com/r/openclaw/comments/1s38ufu/is_anthropic_the_way_to_go/",
+          "upvotes": 4,
+          "comments": 25,
+          "score": 4,
+          "author": "iammontoya",
+          "created": "2026-03-25T12:06:59.000Z"
+        },
+        {
+          "id": "1s3porg",
+          "source": "reddit",
+          "subreddit": "VCX_Fundrise",
+          "title": "New Fundrise podcast episode - featuring Anthropic",
+          "url": "https://reddit.com/r/VCX_Fundrise/comments/1s3porg/new_fundrise_podcast_episode_featuring_anthropic/",
+          "upvotes": 5,
+          "comments": 1,
+          "score": 5,
+          "author": "Dull_Needleworker698",
+          "created": "2026-03-25T22:34:21.000Z"
+        }
+      ],
+      "youtube": []
+    }
+  }
+}
