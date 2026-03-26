@@ -311,6 +311,11 @@ async function loadSettings() {
   document.getElementById('s-yt-views').value   = s.youtube?.views   || 1000;
   document.getElementById('s-yt-likes').value   = s.youtube?.likes   || 50;
   document.getElementById('s-interval').value   = s.pollIntervalMinutes || 30;
+  // Toon placeholder als key al geconfigureerd is
+  const ytInput = document.getElementById('s-yt-key');
+  if (ytInput) ytInput.placeholder = s.hasYouTubeKey ? '✅ Geconfigureerd (laat leeg om te behouden)' : 'AIzaSy...';
+  const rdInput = document.getElementById('s-reddit-id');
+  if (rdInput) rdInput.placeholder = s.hasRedditAuth ? '✅ Geconfigureerd' : 'your_client_id';
 }
 
 // ── Status bar ────────────────────────────────────────────────────

@@ -221,7 +221,12 @@ app.delete('/api/alerts/:id', (req, res) => {
 
 // Settings
 app.get('/api/settings', (_req, res) => {
-  res.json(readJSON('settings.json', {}));
+  const settings = readJSON('settings.json', {});
+  res.json({
+    ...settings,
+    hasYoutubeKey: !!process.env.YOUTUBE_API_KEY,
+    hasRedditAuth: !!(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET),
+  });
 });
 
 app.put('/api/settings', (req, res) => {
