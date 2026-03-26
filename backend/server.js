@@ -254,10 +254,10 @@ function startScheduler() {
 
 // ── Boot ──────────────────────────────────────────────────────────
 initData();
-startScheduler();
+// startScheduler(); // Uitgeschakeld — polling enkel manueel via /api/poll
 
 // Initial poll on startup (after 3s delay)
-setTimeout(() => pollAll(), 3000);
+// setTimeout(() => pollAll(), 3000); // Uitgeschakeld — geen auto-poll bij startup
 
 app.listen(PORT, () => {
   console.log(`\n📈 Trend Tracker draait op http://localhost:${PORT}`);
