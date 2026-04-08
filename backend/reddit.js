@@ -66,6 +66,7 @@ export async function searchReddit(query, subreddits = [], limit = 10) {
           score:      p.score,
           author:     p.author,
           created:    new Date(p.created_utc * 1000).toISOString(),
+          edited:     p.edited && p.edited !== false ? new Date(p.edited * 1000).toISOString() : null,
           thumbnail:  p.thumbnail !== 'self' && p.thumbnail !== 'default' ? p.thumbnail : null,
           flair:      p.link_flair_text || null,
         });
@@ -101,6 +102,7 @@ export async function searchRedditPublic(query, subreddit = 'artificial', limit 
       score:     p.score,
       author:    p.author,
       created:   new Date(p.created_utc * 1000).toISOString(),
+      edited:    p.edited && p.edited !== false ? new Date(p.edited * 1000).toISOString() : null,
     };
   });
 }

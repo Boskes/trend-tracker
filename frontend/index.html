@@ -70,9 +70,12 @@
 
     /* Topic tabs */
     .topic-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-    .topic-tab{padding:7px 16px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted);background:var(--surface);transition:all .12s;}
+    .topic-tab{padding:8px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted);background:var(--surface);transition:all .12s;text-align:left;line-height:1.3;}
     .topic-tab:hover{border-color:var(--accent);color:var(--text);}
     .topic-tab.active{color:#fff;border-color:transparent;}
+    .tab-label{font-weight:700;margin-bottom:3px;}
+    .topic-tab:not(.active) .tab-label{color:var(--text);}
+    .tab-ts{font-size:.67rem;font-weight:400;opacity:.75;white-space:nowrap;}
 
     /* Two-column feed */
     .feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
@@ -88,8 +91,10 @@
     .cc-top{display:flex;gap:10px;align-items:flex-start;}
     .cc-thumb{width:64px;height:42px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface2);}
     .cc-body{flex:1;min-width:0;}
-    .cc-title{font-size:.88rem;font-weight:600;line-height:1.35;margin-bottom:4px;color:var(--text);}
-    .cc-title:hover{color:var(--accent);}
+    .cc-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px;}
+    .cc-title{font-size:.88rem;font-weight:600;line-height:1.35;color:var(--text);flex:1;}
+    .content-card:hover .cc-title{color:var(--accent);}
+    .cc-open{flex-shrink:0;white-space:nowrap;}
     .cc-meta{font-size:.73rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;}
     .cc-stat{display:flex;align-items:center;gap:3px;}
     .cc-badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
@@ -260,6 +265,16 @@ POLL_INTERVAL_MINUTES=30</div>
 const API = window.location.origin;
 let state = { status: {}, results: {}, alerts: [], topics: [], activeTopic: null };
 
+// ── Belgische datum/tijd formatter ────────────────────────────────
+function fmtBE(isoString) {
+  if (!isoString) return '—';
+  return new Date(isoString).toLocaleString('nl-BE', {
+    timeZone: 'Europe/Brussels',
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
 // ── Boot ──────────────────────────────────────────────────────────
 async function init() {
   await loadTopics();
@@ -293,6 +308,11 @@ async function loadResults() {
   state.results = await fetch(`${API}/api/results`).then(r => r.json());
   renderFeed();
   renderMetrics();
+  // Toon globale updatedAt in de header
+  if (state.results.updatedAt) {
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = `Laatste update: ${fmtBE(state.results.updatedAt)}`;
+  }
 }
 
 async function loadAlerts() {
@@ -334,8 +354,7 @@ function renderStatus() {
   document.getElementById('poll-status-text').textContent = s.isPolling ? 'Polling…' : s.pollStatus === 'ok' ? 'Up to date' : 'Idle';
 
   if (s.lastPoll) {
-    const d = new Date(s.lastPoll);
-    document.getElementById('last-updated').textContent = `Last updated: ${d.toLocaleTimeString('nl-NL')}`;
+    document.getElementById('last-updated').textContent = `Laatste update: ${fmtBE(s.lastPoll)}`;
   }
 }
 
@@ -370,10 +389,19 @@ function renderTopicNav() {
 }
 
 function renderTopicTabs() {
-  document.getElementById('topic-tabs').innerHTML = state.topics.map(t => `
-    <button class="topic-tab ${state.activeTopic===t.id?'active':''}"
-      style="${state.activeTopic===t.id?`background:${t.color}`:'color:var(--muted)'}"
-      onclick="setTopic('${t.id}')">${t.label}</button>`).join('');
+  document.getElementById('topic-tabs').innerHTML = state.topics.map(t => {
+    const d = state.results.topics?.[t.id] || {};
+    const created = d.createdAt ? `<div class="tab-ts">📅 ${fmtBE(d.createdAt)}</div>` : '';
+    const updated = d.updatedAt ? `<div class="tab-ts">🔄 ${fmtBE(d.updatedAt)}</div>` : '';
+    const isActive = state.activeTopic === t.id;
+    return `
+      <button class="topic-tab ${isActive ? 'active' : ''}"
+        style="${isActive ? `background:${t.color}` : 'color:var(--muted)'}"
+        onclick="setTopic('${t.id}')">
+        <div class="tab-label">${t.label}</div>
+        ${created}${updated}
+      </button>`;
+  }).join('');
 }
 
 function setTopic(id) {
@@ -390,18 +418,29 @@ function renderFeed() {
   const reddit  = data.reddit  || [];
   const youtube = data.youtube || [];
 
+  const createdAt = data.createdAt ? `<span title="Aangemaakt">📅 ${fmtBE(data.createdAt)}</span>` : '';
+  const updatedAt = data.updatedAt ? `<span title="Laatste update">🔄 ${fmtBE(data.updatedAt)}</span>` : '';
+  const timestampBar = `
+    <div style="display:flex;gap:16px;font-size:.74rem;color:var(--muted);margin-bottom:14px;align-items:center;flex-wrap:wrap;justify-content:space-between;">
+      <div style="display:flex;gap:16px;align-items:center;">
+        ${createdAt}${updatedAt}
+      </div>
+      <button id="topic-poll-btn" class="btn btn-primary btn-sm" onclick="triggerTopicPoll('${topic.id}')">🔄 Poll ${topic.label}</button>
+    </div>`;
+
   document.getElementById('feed-content').innerHTML = `
+    ${timestampBar}
     <div class="feed-grid">
       <div class="feed-section">
         <h3><span>🟠</span> Reddit · r/${topic.subreddits?.join(', r/') || 'various'}</h3>
         <div class="content-list">
-          ${reddit.length ? reddit.map(p => redditCard(p)).join('') : '<div class="empty"><div class="ei">🟠</div><p>No posts yet — hit Poll Now</p></div>'}
+          ${reddit.length ? reddit.map(p => redditCard(p)).join('') : '<div class="empty"><div class="ei">🟠</div><p>Nog geen posts — klik op Poll Now</p></div>'}
         </div>
       </div>
       <div class="feed-section">
         <h3><span>🔴</span> YouTube</h3>
         <div class="content-list">
-          ${youtube.length ? youtube.map(v => youtubeCard(v)).join('') : '<div class="empty"><div class="ei">🔴</div><p>No videos yet — add YouTube API key</p></div>'}
+          ${youtube.length ? youtube.map(v => youtubeCard(v)).join('') : '<div class="empty"><div class="ei">🔴</div><p>Nog geen video\'s — voeg YouTube API key toe</p></div>'}
         </div>
       </div>
     </div>`;
@@ -410,15 +449,23 @@ function renderFeed() {
 function redditCard(p) {
   const isHot  = p.upvotes  >= 100;
   const isNew  = (Date.now() - new Date(p.created).getTime()) < 24*60*60*1000;
+  const createdStr = p.created ? `<span class="cc-stat" title="Aangemaakt op Reddit">📅 ${fmtBE(p.created)}</span>` : '';
+  const editedStr  = p.edited  ? `<span class="cc-stat" title="Post gewijzigd">✏️ ${fmtBE(p.edited)}</span>`       : '';
   return `
-    <div class="content-card">
+    <div class="content-card" onclick="window.open('${p.url}','_blank')" style="cursor:pointer">
       <div class="cc-top">
         <div class="cc-body">
-          <div class="cc-title"><a href="${p.url}" target="_blank">${p.title}</a></div>
+          <div class="cc-title-row">
+            <div class="cc-title">${p.title}</div>
+            <a href="${p.url}" target="_blank" class="btn btn-secondary btn-sm cc-open" onclick="event.stopPropagation()">Open ↗</a>
+          </div>
           <div class="cc-meta">
             <span class="cc-stat">⬆️ ${p.upvotes.toLocaleString()}</span>
             <span class="cc-stat">💬 ${p.comments}</span>
             <span class="cc-stat">👤 ${p.author}</span>
+          </div>
+          <div class="cc-meta" style="margin-top:4px">
+            ${createdStr}${editedStr}
           </div>
           <div class="cc-badges">
             <span class="sub-badge">r/${p.subreddit}</span>
@@ -433,16 +480,24 @@ function redditCard(p) {
 
 function youtubeCard(v) {
   const isHot = v.views >= 5000;
+  const publishedStr = v.published ? `<span class="cc-stat" title="Gepubliceerd op YouTube">📅 ${fmtBE(v.published)}</span>` : '';
   return `
-    <div class="content-card">
+    <div class="content-card" onclick="window.open('${v.url}','_blank')" style="cursor:pointer">
       <div class="cc-top">
         ${v.thumbnail ? `<img class="cc-thumb" src="${v.thumbnail}" alt="" loading="lazy" />` : ''}
         <div class="cc-body">
-          <div class="cc-title"><a href="${v.url}" target="_blank">${v.title}</a></div>
+          <div class="cc-title-row">
+            <div class="cc-title">${v.title}</div>
+            <a href="${v.url}" target="_blank" class="btn btn-secondary btn-sm cc-open" onclick="event.stopPropagation()">Open ↗</a>
+          </div>
           <div class="cc-meta">
             <span class="cc-stat">👁 ${v.views.toLocaleString()}</span>
             <span class="cc-stat">👍 ${v.likes.toLocaleString()}</span>
+            <span class="cc-stat">💬 ${v.comments.toLocaleString()}</span>
             <span class="cc-stat">📺 ${v.channel}</span>
+          </div>
+          <div class="cc-meta" style="margin-top:4px">
+            ${publishedStr}
           </div>
           <div class="cc-badges">
             ${isHot ? '<span class="hot-badge">🔥 TRENDING</span>' : ''}
@@ -467,7 +522,7 @@ function renderAlerts() {
         <div class="alert-meta">
           <span>📁 ${a.topicLabel}</span>
           <span class="alert-metric">📊 ${a.metric}</span>
-          <span>🕐 ${new Date(a.timestamp).toLocaleString('nl-NL')}</span>
+          <span>🕐 ${fmtBE(a.timestamp)}</span>
         </div>
       </div>
       <div class="alert-actions">
@@ -524,11 +579,32 @@ async function triggerPoll() {
   const btn = document.getElementById('poll-btn');
   btn.disabled = true; btn.textContent = '⏳ Polling…';
   await fetch(`${API}/api/poll`, { method: 'POST' });
-  setTimeout(async () => {
-    await Promise.all([loadStatus(), loadResults(), loadAlerts()]);
-    btn.disabled = false; btn.textContent = '🔄 Poll Now';
-    toast('Poll complete!');
-  }, 8000);
+  waitForPollDone(btn, '🔄 Poll Now', 'Poll complete!');
+}
+
+async function triggerTopicPoll(topicId) {
+  const btn = document.getElementById('topic-poll-btn');
+  const topic = state.topics.find(t => t.id === topicId);
+  if (!btn || !topic) return;
+  btn.disabled = true; btn.textContent = '⏳ Polling…';
+  await fetch(`${API}/api/poll/${topicId}`, { method: 'POST' });
+  waitForPollDone(btn, `🔄 Poll ${topic.label}`, `${topic.label} geüpdated!`);
+}
+
+function waitForPollDone(btn, resetLabel, successMsg) {
+  let attempts = 0;
+  const check = async () => {
+    attempts++;
+    const s = await fetch(`${API}/api/status`).then(r => r.json());
+    if (!s.isPolling || attempts >= 30) {
+      await Promise.all([loadStatus(), loadResults(), loadAlerts()]);
+      if (btn) { btn.disabled = false; btn.textContent = resetLabel; }
+      toast(successMsg);
+    } else {
+      setTimeout(check, 2000);
+    }
+  };
+  setTimeout(check, 2000);
 }
 
 // ── Toast ─────────────────────────────────────────────────────────

@@ -23,29 +23,33 @@ export async function searchYouTube(query, maxResults = 10) {
   const items = searchData.items || [];
   if (!items.length) return [];
 
-  // Step 2: get stats (views, likes) for all video IDs
+  // Step 2: get stats (views, likes) + full snippet (incl. updatedAt) for all video IDs
   const ids = items.map(i => i.id.videoId).join(',');
-  const statsUrl = `${BASE}/videos?part=statistics,snippet&id=${ids}&key=${key}`;
+  const statsUrl = `${BASE}/videos?part=statistics,snippet,contentDetails&id=${ids}&key=${key}`;
   const statsRes = await fetch(statsUrl);
   const statsData = await statsRes.json();
   const statsMap = {};
   for (const v of (statsData.items || [])) {
-    statsMap[v.id] = v.statistics;
+    statsMap[v.id] = { stats: v.statistics, snippet: v.snippet };
   }
 
   return items.map(item => {
-    const id    = item.id.videoId;
-    const snip  = item.snippet;
-    const stats = statsMap[id] || {};
+    const id      = item.id.videoId;
+    const snip    = item.snippet;
+    const full    = statsMap[id] || {};
+    const stats   = full.stats   || {};
+    const fsnip   = full.snippet || snip;
     return {
       id,
       source:       'youtube',
-      title:        snip.title,
-      channel:      snip.channelTitle,
-      description:  snip.description?.slice(0, 200),
+      title:        fsnip.title || snip.title,
+      channel:      fsnip.channelTitle || snip.channelTitle,
+      description:  (fsnip.description || snip.description)?.slice(0, 200),
       url:          `https://www.youtube.com/watch?v=${id}`,
       thumbnail:    snip.thumbnails?.medium?.url || snip.thumbnails?.default?.url,
-      published:    snip.publishedAt,
+      published:    fsnip.publishedAt || snip.publishedAt,
+      // YouTube levert geen expliciete "last updated" per video via de public API,
+      // maar we slaan de polltijdstip op als referentie
       views:        parseInt(stats.viewCount)    || 0,
       likes:        parseInt(stats.likeCount)    || 0,
       comments:     parseInt(stats.commentCount) || 0,

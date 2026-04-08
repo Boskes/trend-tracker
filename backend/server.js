@@ -72,6 +72,8 @@ async function pollAll() {
 
   const settings = readJSON('settings.json', {});
   const results  = readJSON('results.json', { topics: {} });
+  // Bewaar createdAt als het al bestaat (eerste poll)
+  if (!results.createdAt) results.createdAt = new Date().toISOString();
   const alertsData = readJSON('alerts.json', { alerts: [] });
   const newAlerts  = [];
 
@@ -148,6 +150,10 @@ async function pollAll() {
       }
     }
 
+    // Bewaar createdAt per topic (eerste keer) en update updatedAt altijd
+    const existing = results.topics[topic.id] || {};
+    topicResults.createdAt = existing.createdAt || new Date().toISOString();
+    topicResults.updatedAt = new Date().toISOString();
     results.topics[topic.id] = topicResults;
   }
 
@@ -234,11 +240,102 @@ app.put('/api/settings', (req, res) => {
   res.json({ ok: true });
 });
 
-// Manual poll trigger
+// Manual poll trigger — all topics
 app.post('/api/poll', (_req, res) => {
   if (isPolling) return res.json({ ok: false, message: 'Already polling' });
   pollAll();
   res.json({ ok: true, message: 'Poll started' });
+});
+
+// Manual poll trigger — single topic
+app.post('/api/poll/:topicId', async (req, res) => {
+  if (isPolling) return res.json({ ok: false, message: 'Already polling' });
+  const topic = TOPICS.find(t => t.id === req.params.topicId);
+  if (!topic) return res.status(404).json({ error: 'Topic not found' });
+
+  isPolling  = true;
+  pollStatus = 'polling';
+  res.json({ ok: true, message: `Polling ${topic.label}…` });
+
+  try {
+    const settings   = readJSON('settings.json', {});
+    const results    = readJSON('results.json', { topics: {} });
+    const alertsData = readJSON('alerts.json', { alerts: [] });
+    const newAlerts  = [];
+    const topicResults = { reddit: [], youtube: [] };
+
+    if (!results.createdAt) results.createdAt = new Date().toISOString();
+
+    // Reddit
+    if (settings.reddit?.enabled !== false) {
+      try {
+        let posts;
+        const hasAuth = process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET;
+        if (hasAuth) {
+          posts = await (await import('./reddit.js')).searchReddit(topic.keywords[0], topic.subreddits);
+        } else {
+          const sub = topic.subreddits[0] || 'artificial';
+          posts = await (await import('./reddit.js')).searchRedditPublic(topic.keywords[0], sub);
+        }
+        topicResults.reddit = posts.slice(0, 15);
+        for (const post of topicResults.reddit) {
+          const alreadyAlerted = alertsData.alerts.some(a => a.id === `reddit-${post.id}`);
+          if (!alreadyAlerted) {
+            const hitUpvotes  = post.upvotes  >= (settings.reddit?.upvotes  || 50);
+            const hitComments = post.comments >= (settings.reddit?.comments || 20);
+            if (hitUpvotes || hitComments) {
+              newAlerts.push({ id: `reddit-${post.id}`, type: 'reddit', topicId: topic.id, topicLabel: topic.label,
+                title: post.title, url: post.url,
+                metric: hitUpvotes ? `${post.upvotes} upvotes` : `${post.comments} comments`,
+                value: hitUpvotes ? post.upvotes : post.comments,
+                timestamp: new Date().toISOString(), seen: false });
+            }
+          }
+        }
+      } catch (e) { console.warn(`  ⚠️  Reddit [${topic.label}] error:`, e.message); }
+    }
+
+    // YouTube
+    if (settings.youtube?.enabled !== false && process.env.YOUTUBE_API_KEY) {
+      try {
+        const videos = await (await import('./youtube.js')).searchYouTube(topic.youtubeQuery);
+        topicResults.youtube = videos.slice(0, 10);
+        for (const video of topicResults.youtube) {
+          const alreadyAlerted = alertsData.alerts.some(a => a.id === `yt-${video.id}`);
+          if (!alreadyAlerted) {
+            const hitViews = video.views >= (settings.youtube?.views || 1000);
+            const hitLikes = video.likes >= (settings.youtube?.likes || 50);
+            if (hitViews || hitLikes) {
+              newAlerts.push({ id: `yt-${video.id}`, type: 'youtube', topicId: topic.id, topicLabel: topic.label,
+                title: video.title, url: video.url,
+                metric: hitViews ? `${video.views.toLocaleString()} views` : `${video.likes} likes`,
+                value: hitViews ? video.views : video.likes,
+                timestamp: new Date().toISOString(), seen: false });
+            }
+          }
+        }
+      } catch (e) { console.warn(`  ⚠️  YouTube [${topic.label}] error:`, e.message); }
+    }
+
+    const existing = results.topics[topic.id] || {};
+    topicResults.createdAt = existing.createdAt || new Date().toISOString();
+    topicResults.updatedAt = new Date().toISOString();
+    results.topics[topic.id] = topicResults;
+    results.updatedAt = new Date().toISOString();
+    writeJSON('results.json', results);
+
+    if (newAlerts.length) {
+      alertsData.alerts = [...newAlerts, ...alertsData.alerts].slice(0, 200);
+      writeJSON('alerts.json', alertsData);
+    }
+    console.log(`✅ Poll [${topic.label}] complete. ${newAlerts.length} new alert(s).`);
+  } catch (e) {
+    console.error('Poll topic error:', e);
+  } finally {
+    lastPoll   = new Date().toISOString();
+    pollStatus = 'ok';
+    isPolling  = false;
+  }
 });
 
 // ── Scheduler ─────────────────────────────────────────────────────

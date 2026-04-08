@@ -9,5 +9,5 @@
     "views": 1000,
     "likes": 50
   },
-  "pollIntervalMinutes": 30
+  "pollIntervalMinutes": 0
 }
